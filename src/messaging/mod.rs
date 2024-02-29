@@ -1,2 +1,1 @@
-pub mod request_types;
-pub mod actions;
+pub mod requests;

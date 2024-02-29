@@ -3,7 +3,7 @@ mod game_logic;
 
 use std::{error::Error, io::Read, net};
 
-use messaging::request_types::{TcpMessage, Request};
+use messaging::requests::{TcpMessage, Request};
 
 
 
@@ -19,7 +19,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         
         let received_request = TcpMessage {
             sender: addr,
-            message: message_content,
+            data: message_content,
         };
         
         handle_message(received_request).unwrap_or_else(|op| {
