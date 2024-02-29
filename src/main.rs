@@ -3,8 +3,7 @@ mod game_logic;
 
 use std::{error::Error, io::Read, net};
 
-use messaging::{TcpMessage, Request};
-use game_logic::PongGameState;
+use messaging::request_types::{TcpMessage, Request};
 
 
 
