@@ -4,6 +4,7 @@ use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct PongGameState {
+    pub is_running: bool,
     pub player_1_position: u16,
     pub player_2_position: u16,
     pub ball: PongBall,

@@ -1,4 +1,4 @@
-use super::game_state::{PongGameState, GameModifiers, PongBall};
+use super::game_state::{PongGameState, PongBall};
 
 
 
@@ -13,9 +13,10 @@ pub struct PongGameHoster {
 }
 impl GameHoster for PongGameHoster {
     fn start_game(&mut self) {
-        loop {
+        let mut is_running = true;
+        while is_running {
             self.update_game_state();
-            break;
+            is_running = false;
         }
     }
 
@@ -23,6 +24,7 @@ impl GameHoster for PongGameHoster {
         todo!()
     }
 
+    /// Updates the state of the game to the next frame
     fn update_game_state(&mut self) {
         let player_1_x = 20;
         let player_2_x = 580;
@@ -30,30 +32,34 @@ impl GameHoster for PongGameHoster {
         
         let new_ball_x = self.game_state.ball.x + self.game_state.ball.speed_x;
         let new_ball_y = self.game_state.ball.y + self.game_state.ball.speed_y;
+        let mut new_ball_x_speed = 0;
+        let mut new_ball_y_speed = 0;
         
         if new_ball_x <= player_1_x || new_ball_x >= player_2_x {
-            self.game_state.ball.speed_x = self.game_state.ball.speed_x * -1;
+            new_ball_x_speed = self.game_state.ball.speed_x * -1;
         } 
         
         if self.game_state.ball.y <= 0 || self.game_state.ball.y >= screen_height {
-            self.game_state.ball.speed_y = self.game_state.ball.speed_y * -1;
+            new_ball_y_speed = self.game_state.ball.speed_y * -1;
         }
         
+        
         self.game_state = PongGameState {
+            is_running: self.game_state.is_running,
             player_1_position: self.game_state.player_1_position,
             player_2_position: self.game_state.player_2_position,
             ball: PongBall {
-                x: self.game_state.ball.x + self.game_state.ball.speed_x,
-                y: self.game_state.ball.y + self.game_state.ball.speed_y,
-                speed_x: self.game_state.ball.speed_x,
-                speed_y: self.game_state.ball.speed_y,
+                x: new_ball_x,
+                y: new_ball_y,
+                speed_x: new_ball_x_speed,
+                speed_y: new_ball_y_speed,
             },
             modifiers: self.game_state.modifiers.clone(),
         };
     }
 }
 impl PongGameHoster {
-    pub fn new(game_state: PongGameState) -> Self {
+    pub fn _new(game_state: PongGameState) -> Self {
         PongGameHoster { game_state: game_state }
     }
 }
