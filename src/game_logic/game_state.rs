@@ -12,14 +12,14 @@ pub struct PongGameState {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct PongBall {
-    pub x: u16,
-    pub y: u16,
-    pub speed_x: u16,
-    pub speed_y: u16,
+    pub x: i32,
+    pub y: i32,
+    pub speed_x: i32,
+    pub speed_y: i32,
 }
 
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub enum GameModifiers {
     None, 
     IncrementSpeed,
