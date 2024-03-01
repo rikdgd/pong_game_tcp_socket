@@ -1,4 +1,4 @@
-use serde::{Serialize, Deserialize, Deserializer};
+use serde::{Serialize, Deserialize};
 
 
 
@@ -6,7 +6,8 @@ use serde::{Serialize, Deserialize, Deserializer};
 pub struct PongGameState {
     pub player_1_position: u16,
     pub player_2_position: u16,
-    pub ball_x: PongBall,
+    pub ball: PongBall,
+    pub modifiers: GameModifiers,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -15,4 +16,15 @@ pub struct PongBall {
     pub y: u16,
     pub speed_x: u16,
     pub speed_y: u16,
+}
+
+
+#[derive(Serialize, Deserialize, Debug)]
+pub enum GameModifiers {
+    None, 
+    IncrementSpeed,
+    EnableGravity,
+    MultipleBalls,
+    DecreasingBat,
+    FieldRotate,
 }
