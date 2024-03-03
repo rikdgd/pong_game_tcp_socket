@@ -39,7 +39,7 @@ impl GameAction for EndGameAction {
 
     fn from_request(request: Request) -> Self {
         if request.action != "end_game" {
-            panic!("Invalid request for StartGameAction");
+            panic!("Invalid request for EndGameAction");
         }
         
         todo!()
