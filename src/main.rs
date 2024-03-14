@@ -1,33 +1,34 @@
 mod messaging;
 mod game_logic;
 
-use std::{error::Error, io::Read, net};
+use std::{error::Error, io::Read};
 use messaging::requests::{TcpMessage, Request};
+
+use std::net::TcpListener;
+use std::thread;
+use tungstenite::{accept, WebSocket};
+use tungstenite::protocol::Message;
 
 
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let listener = net::TcpListener::bind("127.0.0.1:8080")?;
+    let server = TcpListener::bind("127.0.0.1:8080")?;
     let mut running = true;
     
-    while running {
-        let (mut stream, addr) = listener.accept()?;
-        let mut content_buffer: Vec<u8> = Vec::new();
-        stream.read_to_end(&mut content_buffer)?;
-        let message_content = String::from_utf8(content_buffer.clone())?;
-        
-        let received_request = TcpMessage {
-            sender: addr,
-            data: message_content,
-        };
-        
-        handle_message(received_request).unwrap_or_else(|op| {
-            println!("{:#?}", op);
-            running = false;
+    for stream in server.incoming() {
+        thread::spawn(move || {
+            let mut socket = accept(stream.unwrap()).unwrap();
+            loop {
+                let message = socket.read().unwrap();
+                
+                if message.is_binary() || message.is_text() {
+                    parse_message(message);
+                }
+            }
         });
     }
     
-    return Ok(());
+    Ok(())
 }
 
 fn handle_message(message: TcpMessage) -> Result<(), Box<dyn Error>> {
@@ -35,6 +36,11 @@ fn handle_message(message: TcpMessage) -> Result<(), Box<dyn Error>> {
     
     println!("{:#?}", request);
     
-    return Ok(());
+    Ok(())
+}
+
+// TODO: Should replace the handle_message function since the new type of 'Message' is used.
+fn parse_message(message: Message) -> String {
+    todo!()
 }
 
