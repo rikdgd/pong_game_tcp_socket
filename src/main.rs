@@ -16,12 +16,12 @@ fn main() -> Result<(), Box<dyn Error>> {
         stream.read_to_end(&mut content_buffer)?;
         let message_content = String::from_utf8(content_buffer.clone())?;
         
-        let received_request = TcpMessage {
+        let received_message = TcpMessage {
             sender: addr,
             data: message_content,
         };
         
-        handle_message(received_request).unwrap_or_else(|op| {
+        handle_message(received_message).unwrap_or_else(|op| {
             println!("{:#?}", op);
             running = false;
         });

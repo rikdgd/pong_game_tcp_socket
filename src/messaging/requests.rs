@@ -58,7 +58,7 @@ fn parse_tpc_message_test() {
 
     //Act
     println!("message: {}", &message);
-    let parsed_request = Request::from_tcp_message(tcp_message).unwrap();
+    let parsed_request = Request::from_tcp_message(tcp_message).expect("failed to parse TCP message.");
 
     // Assert
     assert_eq!(parsed_request.action, action);
