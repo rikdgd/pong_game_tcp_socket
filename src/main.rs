@@ -1,40 +1,39 @@
 mod messaging;
 mod game_logic;
 
-use std::{error::Error, io::Read, net};
-use messaging::requests::{TcpMessage, Request};
+use std::error::Error;
+use messaging::requests::Request;
+
+use std::net::TcpListener;
+use std::thread;
+use tungstenite::accept;
+use tungstenite::protocol::Message;
 
 
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let listener = net::TcpListener::bind("127.0.0.1:8080")?;
-    let mut running = true;
+    let server = TcpListener::bind("127.0.0.1:8080")?;
     
-    while running {
-        let (mut stream, addr) = listener.accept()?;
-        let mut content_buffer: Vec<u8> = Vec::new();
-        stream.read_to_end(&mut content_buffer)?;
-        let message_content = String::from_utf8(content_buffer.clone())?;
-        
-        let received_message = TcpMessage {
-            sender: addr,
-            data: message_content,
-        };
-        
-        handle_message(received_message).unwrap_or_else(|op| {
-            println!("{:#?}", op);
-            running = false;
+    for stream in server.incoming() {
+        thread::spawn(move || {
+            let mut socket = accept(stream.unwrap()).unwrap();
+            loop {
+                let message = socket.read().expect("Failed to read from socket.");
+                
+                if message.is_binary() || message.is_text() {
+                    handle_message(message).expect("Failed to handle incomming message.");
+                }
+            }
         });
     }
     
-    return Ok(());
+    Ok(())
 }
 
-fn handle_message(message: TcpMessage) -> Result<(), Box<dyn Error>> {
-    let request = Request::from_tcp_message(message)?;
+fn handle_message(message: Message) -> Result<(), Box<dyn Error>> {
+    let request = Request::from_message(message)?;
     
     println!("{:#?}", request);
     
-    return Ok(());
+    Ok(())
 }
-
