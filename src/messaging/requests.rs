@@ -2,6 +2,7 @@ use std::error::Error;
 use std::net::{Ipv4Addr, SocketAddr, IpAddr};
 use serde::{Serialize, Deserialize};
 use serde_json;
+use tungstenite::Message;
 
 
 
@@ -21,6 +22,17 @@ pub struct Request {
 impl Request {
     pub fn from_tcp_message(tcp_message: TcpMessage) -> Result<Self, Box<dyn Error>> {
         let parsed_message: Request = serde_json::from_str(&tcp_message.data)?;
+        Ok(parsed_message)
+    }
+    
+    pub fn from_message(message: Message) -> Result<Self, Box<dyn Error>> {
+        let data = match message {
+            Message::Text(text) => text,
+            Message::Binary(binary) => String::from_utf8_lossy(&binary).to_string(),
+            _ => String::from(""),
+        };
+        
+        let parsed_message: Request = serde_json::from_str(&data)?;
         Ok(parsed_message)
     }
 }
