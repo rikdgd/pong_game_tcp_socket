@@ -1,12 +1,12 @@
 mod messaging;
 mod game_logic;
 
-use std::{error::Error, io::Read};
-use messaging::requests::{TcpMessage, Request};
+use std::error::Error;
+use messaging::requests::Request;
 
 use std::net::TcpListener;
 use std::thread;
-use tungstenite::{accept, WebSocket};
+use tungstenite::accept;
 use tungstenite::protocol::Message;
 
 
